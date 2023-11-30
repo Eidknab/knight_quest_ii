@@ -1,12 +1,17 @@
-class Character:
-    def __init__(self, character_type, name, class_name, 
+from  Classes.map_world import *
+import pygame
+
+class Character(pygame.sprite.Sprite):
+    def __init__(self, character_type, name, position,
                  level_max, level, xp_max, xp, hp_max, hp, mp_max, mp, 
                  strength, dexterity, vitality, spirit,  
                  critical, armor, gold,
                  inventory, spellbook):
-        self.caractere_type = character_type    # player, monster, boss, merchant
-        self.name = name
-        self.class_name = class_name            # warrior, mage, rogue and all monsters types
+        super().__init__()
+        self.character_type = character_type    # player, zombie, wolf, skeleton, boss, merchant
+        self.name = name                        # eidknab, zebhen, nabknab, monster1, monster2, monster3,
+        self.position = position
+        self.image = pygame.image.load('Assets/' + self.character_type + '.png')
         self.level = level
         self.level_max = level_max
         self.xp_max = xp_max
@@ -40,4 +45,10 @@ class Character:
         # spellbook
         self.spellbook = []
         self.spellbook_max_size = spirit // 10 + 1
+        
+    def __str__(self):
+        return f"{self.name} is a {self.character_type} and is level {self.level} with {self.hp} HP and {self.mp} MP."
+        
+    def get_name(self):
+        return self.name
         

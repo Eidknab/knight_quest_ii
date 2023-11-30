@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 .DS_Store
-Assets/world_map_default.png
+Assets/map_world_default.png
 Assets/background.png
 Assets/Pack/
 Assets/pxo/
