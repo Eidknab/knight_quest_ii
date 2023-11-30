@@ -43,10 +43,6 @@ class Game:
         while gamelooping:
             # world map display refresh
             self.screen.blit(self.background, (0, 0))
-            # player, boss, merchant
-            self.screen.blit(self.player.image, self.player.position)
-            self.screen.blit(self.boss.image, self.boss.position)
-            self.screen.blit(self.merchant.image, self.merchant.position)
             # monsters
             for attr in dir(self):
                 if 'zombie' in attr:
@@ -86,10 +82,77 @@ class Game:
                     elif char == '└':
                         corner4 = pygame.image.load('Assets/corner4.png')
                         self.screen.blit(corner4, position)
+            # player, boss, merchant
+            self.screen.blit(self.player.image, self.player.position)
+            self.screen.blit(self.boss.image, self.boss.position)
+            self.screen.blit(self.merchant.image, self.merchant.position)
+            # move the player
+            
 
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     gamelooping = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        self.move(self.player, 'up')
+                    if event.key == pygame.K_DOWN:
+                        self.move(self.player, 'down')
+                    if event.key == pygame.K_RIGHT:
+                        self.move(self.player, 'right')
+                    if event.key == pygame.K_LEFT:
+                        self.move(self.player, 'left')
         pygame.quit()
+    
+    def move_up(self, character, direction):
+        character.position = (character.position[0], character.position[1] - 16)
+        for i, row in enumerate(self.map_world.map_world_default.ascii_map):
+            for j, char in enumerate(row):
+                position = j*self.map_world.map_world_default.tile, i*self.map_world.map_world_default.tile
+                if character.position == position:
+                    if char == '$':
+                        character.gold += 10
+                        self.map_world.map_world_default.ascii_map[i][j] = '.'
+                        print(character.gold)
+                    elif char == '-':
+                        character.position = (character.position[0], character.position[1] +16)
+                        print('wall coliision')
+                    elif char == '|':
+                        character.position = (character.position[0], character.position[1] +16)
+                        print('wall coliision')
+
+    def move(self, character, direction):
+        if direction == 'up':
+            y = -self.map_world.map_world_default.tile
+            x = 0
+        elif direction == 'down':
+            y = self.map_world.map_world_default.tile
+            x = 0
+        elif direction == 'right':
+            y = 0
+            x = self.map_world.map_world_default.tile
+        elif direction == 'left':
+            y = 0
+            x = -self.map_world.map_world_default.tile
+        character.position = (character.position[0] + x, character.position[1] + y)
+        map_width = len(self.map_world.map_world_default.ascii_map[0]) * self.map_world.map_world_default.tile
+        map_height = len(self.map_world.map_world_default.ascii_map) * self.map_world.map_world_default.tile
+        if character.position[0] < 0 or character.position[0] >= map_width or character.position[1] < 0 or character.position[1] >= map_height:
+            character.position = (character.position[0] - x, character.position[1] - y)
+            print('outside the disc world')
+        for i, row in enumerate(self.map_world.map_world_default.ascii_map):
+            for j, char in enumerate(row):
+                position = j*self.map_world.map_world_default.tile, i*self.map_world.map_world_default.tile
+                if character.position == position:
+                    if char == '$':
+                        character.gold += 10
+                        self.map_world.map_world_default.ascii_map[i][j] = '.'
+                        print(character.gold)
+                    elif char in ('-', '|', '┌', '┐', '┘', '└'):
+                        character.position = (character.position[0] - x, character.position[1] - y)
+                        print('wall or corner')
+                    elif char == '~':
+                        character.position = (character.position[0] - x, character.position[1] - y)
+                        print('water')
+    
         
