@@ -1,0 +1,2 @@
+RESOLUTION = (640, 480)
+GNAME = 'Knight Quest II'

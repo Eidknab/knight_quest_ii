@@ -2,7 +2,7 @@ class Character:
     def __init__(self, character_type, name, class_name, 
                  level_max, level, xp_max, xp, hp_max, hp, mp_max, mp, 
                  strength, dexterity, vitality, spirit,  
-                 gold, critical, armor,
+                 critical, armor, gold,
                  inventory, spellbook):
         self.caractere_type = character_type    # player, monster, boss, merchant
         self.name = name

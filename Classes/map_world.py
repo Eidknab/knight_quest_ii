@@ -35,30 +35,29 @@ class Map_world:
         self.ascii_player = '@'
         self.ascii_boss = 'B'
         self.ascii_merchant = 'M'
-        self.tile_herb1 = '../assets/herb1.png'
-        self.tile_herb2 = '../assets/herb2.png'
-        self.tile_water = '../assets/water.png'
-        self.tile_bridge = '../assets/bridge.png'
-        self.tile_chest = '../assets/chest.png'
-        self.tile_hwall = '../assets/hwall.png'
-        self.tile_vwall = '../assets/vwall.png'
-        self.tile_corner1 = '../assets/corner1.png'
-        self.tile_corner2 = '../assets/corner2.png'
-        self.tile_corner3 = '../assets/corner3.png'
-        self.tile_corner4 = '../assets/corner4.png'
-        self.tile_player = '../assets/player.png'
-        self.tile_monster1 = '../assets/zombie.png'
-        self.tile_monster2 = '../assets/skeleton.png'
-        self.tile_monster3 = '../assets/wolf.png'
-        self.tile_boss = '../assets/boss.png'
-        self.tile_merchant = '../assets/merchant.png'
+        self.tile_herb1 = 'assets/herb1.png'
+        self.tile_herb2 = 'assets/herb2.png'
+        self.tile_water = 'assets/water.png'
+        self.tile_bridge = 'assets/bridge.png'
+        self.tile_chest = 'assets/chest.png'
+        self.tile_hwall = 'assets/hwall.png'
+        self.tile_vwall = 'assets/vwall.png'
+        self.tile_corner1 = 'assets/corner1.png'
+        self.tile_corner2 = 'assets/corner2.png'
+        self.tile_corner3 = 'assets/corner3.png'
+        self.tile_corner4 = 'assets/corner4.png'
+        self.tile_player = 'assets/player.png'
+        self.tile_monster1 = 'assets/zombie.png'
+        self.tile_monster2 = 'assets/skeleton.png'
+        self.tile_monster3 = 'assets/wolf.png'
+        self.tile_boss = 'assets/boss.png'
+        self.tile_merchant = 'assets/merchant.png'
         # ASCII Map pre-generation (herb1)
         self.ascii_map = [[self.ascii_herb1 for _ in range(self.size[0] // self.tile)] for _ in range(self.size[1] // self.tile)]
         
     def add_herb_variation(self,):
         howmany_herb1 = ((self.size[0] // self.tile) * (self.size[1] // self.tile) // 2) - (3 + self.howmany_chest + self.howmany_monster1 + self.howmany_monster2 + self.howmany_monster3)
         i = 0
-        print(howmany_herb1)
         while i < howmany_herb1:
             x = np.random.randint(0, self.size[0] // self.tile)
             y = np.random.randint(0, self.size[1] // self.tile)
@@ -182,15 +181,25 @@ class Map_world:
                     elif self.ascii_map[y][x] == self.ascii_merchant:
                         tile = pygame.image.load(self.tile_merchant)
                     map_surface.blit(tile, (x * self.tile, y * self.tile))
-            pygame.image.save(map_surface, self.name + '.png')
+            pygame.image.save(map_surface, 'Assets/' + self.name + '.png')
 
-world_map_default = Map_world('world_map_default', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
-world_map_default.add_river()
-world_map_default.add_bridges()
-world_map_default.add_uniques()
-world_map_default.add_chests()
-world_map_default.add_monsters()
-world_map_default.add_herb_variation()
-world_map_default.ascii_map_display()
-world_map_default.create_tiled_map()
-print(f'{world_map_default.name}.png generated !')
+    def background_generate(self):
+        self.background = Map_world('background', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
+        self.background.add_river()
+        self.background.add_bridges()
+        self.background.ascii_map_display()
+        self.background.create_tiled_map()
+        print(f'{self.background.name}.png generated !')
+        pass
+
+    def map_world_default_generate(self):
+        self.map_world_default = Map_world('map_world_default', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
+        self.map_world_default.ascii_map = [row[:] for row in self.background.ascii_map]
+        self.map_world_default.add_uniques()
+        self.map_world_default.add_chests()
+        self.map_world_default.add_monsters()
+        self.map_world_default.add_herb_variation()
+        self.map_world_default.ascii_map_display()
+        self.map_world_default.create_tiled_map()
+        print(f'{self.map_world_default.name}.png generated !')
+        pass
