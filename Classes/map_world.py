@@ -184,17 +184,16 @@ class Map_world:
             pygame.image.save(map_surface, 'Assets/' + self.name + '.png')
 
     def background_generate(self):
-        self.background = Map_world('background', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
-        self.background.add_river()
-        self.background.add_bridges()
-        self.background.ascii_map_display()
-        self.background.create_tiled_map()
-        print(f'{self.background.name}.png generated !')
+        self.add_river()
+        self.add_bridges()
+        self.ascii_map_display()
+        self.create_tiled_map()
+        print(f'{self.name}.png generated !')
         pass
 
     def map_world_default_generate(self):
         self.map_world_default = Map_world('map_world_default', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
-        self.map_world_default.ascii_map = [row[:] for row in self.background.ascii_map]
+        self.map_world_default.ascii_map = [row[:] for row in self.ascii_map]
         self.map_world_default.add_uniques()
         self.map_world_default.add_chests()
         self.map_world_default.add_monsters()
