@@ -192,7 +192,7 @@ class Map_world:
         pass
 
     def map_world_default_generate(self):
-        self.map_world_default = Map_world('map_world_default', (640, 480), 16, (1, 1), (38, 28), (19, 14), 16, 16, 16, 16)
+        self.map_world_default = Map_world('map_world_default', (640, 480), 16, (1, 1), (38, 28), (19, 14), 12, 16, 16, 16)
         self.map_world_default.ascii_map = [row[:] for row in self.ascii_map]
         self.map_world_default.add_uniques()
         self.map_world_default.add_chests()

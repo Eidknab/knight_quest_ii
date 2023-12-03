@@ -143,10 +143,12 @@ class Game:
             monster = getattr(self, monster_name)
             monster_type = monster.character_type
             self.monster_img = pygame.image.load('Assets/' + monster_type + '.png')
-            self.monster_flp = pygame.transform.flip(self.monster_img, True, False)
+            # must be blited first
             self.screen.blit(self.background, (0, 0))
+            # zoom and flip
+            self.monster_flp = pygame.transform.flip(self.monster_img, True, False)
             if monster_type == 'boss':
-                self.monster_zoom = pygame.transform.scale(self.monster_img, (96, 96))
+                self.monster_zoom = pygame.transform.scale(self.monster_flp, (96, 96))
                 self.screen.blit(self.monster_zoom, (460, 240))
             else:
                 self.monster_zoom = pygame.transform.scale(self.monster_flp, (48, 48))
