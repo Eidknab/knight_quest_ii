@@ -47,7 +47,7 @@ class Character(pygame.sprite.Sprite):
         self.spellbook_max_size = spirit // 10 + 1
         
     def __str__(self):
-        return f"{self.name} is a {self.character_type} and is level {self.level} with {self.hp} HP and {self.mp} MP."
+        return f"{self.character_type} {self.name} level {self.level} with {self.hp} HP and {self.mp} MP."
         
     def get_name(self):
         return self.name

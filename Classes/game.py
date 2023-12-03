@@ -1,6 +1,7 @@
 import pygame
 from Classes.map_world import *
 from Classes.characters import *
+from random import randint
 from config import *
 
 class Game:
@@ -33,17 +34,20 @@ class Game:
                     self.merchant = Character('merchant', 'knabresuu', position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
                     self.characters_dict[self.merchant.character_type] = self.merchant.position
                 elif char == 'z':
-                    zombie = Character('zombie', 'zombie', position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
+                    namemonster = 'zombie' + str(zombie_counter)
+                    zombie = Character('zombie', namemonster, position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
                     setattr(self, f"zombie{zombie_counter}", zombie)
                     self.characters_dict[f"zombie{zombie_counter}"] = zombie.position
                     zombie_counter += 1
                 elif char == 'w':
-                    wolf = Character('wolf', 'wolf', position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
+                    namemonster = 'wolf' + str(wolf_counter)
+                    wolf = Character('wolf', namemonster, position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
                     setattr(self, f"wolf{wolf_counter}", wolf)
                     self.characters_dict[f"wolf{wolf_counter}"] = wolf.position
                     wolf_counter += 1
                 elif char == 's':
-                    skeleton = Character('skeleton', 'skeleton', position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
+                    namemonster = 'skeleton' + str(skeleton_counter)
+                    skeleton = Character('skeleton', namemonster, position, 50, 1, 100, 0, 100, 100, 40, 40, 20, 20, 10, 20, 5, 1, 100, [], [])
                     setattr(self, f"skeleton{skeleton_counter}", skeleton)
                     self.characters_dict[f"skeleton{skeleton_counter}"] = skeleton.position
                     skeleton_counter += 1
@@ -103,7 +107,8 @@ class Game:
                         corner4 = pygame.image.load('Assets/corner4.png')
                         self.screen.blit(corner4, position)
             # player, boss, merchant
-            self.screen.blit(self.boss.image, self.boss.position)
+            if self.isalive(self.boss) == True:
+                self.screen.blit(self.boss.image, self.boss.position)
             self.screen.blit(self.merchant.image, self.merchant.position)
             self.screen.blit(self.player.image, self.player.position)
             pygame.display.flip()
@@ -166,6 +171,27 @@ class Game:
             self.screen.blit(self.text, (560, 384))
             self.text = self.font3.render(f"Press Escape", True, (255, 255, 255, 255))
             self.screen.blit(self.text, (10, 10))
+            player_action = self.menu_creator(('attack', 'magic', 'special', 'item'), [120, 360],)
+            if player_action == False:
+                fight = False
+            elif player_action == 'attack':
+                damage = self.attack(self.player, monster)
+                if self.isalive(monster) == False:
+                    fight = False
+                    x = monster.position[0]
+                    y = monster.position[1]
+                    self.map_world.map_world_default.ascii_map[y//16][x//16] = ','
+                    del self.characters_dict[monster_name]
+                    del monster
+                    print(f"{monster_name} is dead !")
+                    print(self.characters_dict)
+                    self.map_world.map_world_default.ascii_map_display()
+            elif player_action == 'magic':
+                print("magic")
+            elif player_action == 'special':
+                print("special")
+            elif player_action == 'item':
+                print("item")
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -179,6 +205,25 @@ class Game:
                         fight = False
         pass
 
+    def attack(self, attacker='player', defender='monster'):
+        print(f"{attacker} is attacking {defender}")
+        damage = attacker.strength
+        damage -= defender.armor
+        damage = randint(damage-5, damage+5)
+        if randint(0, 100) <= (attacker.critical + (attacker.level-defender.level)*5):
+            damage *= 1.5
+            print("critical hit !")
+        defender.hp -= damage
+        print(f"{damage} damage")
+        pass
+    
+    def isalive(self, character):
+        if character.hp > 0:
+            return True
+        else:
+            character.hp = 0
+            return False
+    
     def move(self, character, direction):
         grass_snd = pygame.mixer.Sound('Assets/Sounds/grass.wav')
         wall_snd = pygame.mixer.Sound('Assets/Sounds/wall.wav')
@@ -305,3 +350,68 @@ class Game:
                         if select == 4:
                             self.menu = False
                             pygame.quit()
+
+    def menu_creator(self, select=('1.',), position=[0, 0], action=(None)):
+        self.clock.tick(30)
+        menu_creator_loop = True
+        highlight = 1
+        direction = -0.0625
+        red = green = blue = 255
+        position_const = position.copy()
+        select_snd = pygame.mixer.Sound('Assets/Sounds/select.ogg')
+        confirm_snd = pygame.mixer.Sound('Assets/Sounds/confirm.ogg')
+        critical_snd = pygame.mixer.Sound('Assets/Sounds/critical.ogg')
+        i = 1
+        for keytext in select:
+            keytext = ''.join(keytext)
+            keytext = keytext.capitalize()
+            keytext = str(i) + '. ' + keytext
+            keytext = self.font3.render(keytext, True, (red, green, blue, 255))
+            self.screen.blit(keytext, position)
+            position[1] += 20
+            i += 1
+        position = position_const.copy()
+        while menu_creator_loop:
+            keytext = select[highlight-1]
+            keytext = keytext.capitalize()
+            keytext = str(highlight) + '. ' + keytext
+            keytext = self.font3.render(keytext, False, (red, green, blue, 255))
+            self.screen.blit(keytext, position)
+            red += direction; green += direction; blue += direction
+            if red == 192 or red == 255:
+                direction *= -1
+            elif red < 192 or red > 255:
+                red = green = blue = 255
+            pygame.display.flip()
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    menu_creator_loop = False
+                    pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menu_creator_loop = False
+                        print("out of the fight")
+                        pygame.mixer.music.rewind()
+                        pygame.mixer.music.unpause()
+                        return False
+                    elif event.key == pygame.K_DOWN:
+                        select_snd.play()
+                        if highlight < len(select):
+                            red = green = blue = 192
+                            highlight += 1
+                            position[1] += 20
+                    elif event.key == pygame.K_UP:
+                        select_snd.play()
+                        if highlight > 1:
+                            red = green = blue = 192
+                            highlight -= 1
+                            position[1] -= 20
+                    elif event.key == pygame.K_RETURN:
+                        confirm_snd.play()
+                        textreturn = select[highlight-1]
+                        print(f"return: {textreturn}")
+                        menu_creator_loop = False
+                        return textreturn
+
+                            
