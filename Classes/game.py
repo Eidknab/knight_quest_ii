@@ -135,6 +135,7 @@ class Game:
     
     def fight_start(self, monster_name):
         fight = True
+        pygame.mixer.music.pause()
         while fight:
             self.background = pygame.image.load('Assets/fight_background.png')
             self.player_img = pygame.image.load('Assets/player.png')
@@ -143,10 +144,14 @@ class Game:
             monster_type = monster.character_type
             self.monster_img = pygame.image.load('Assets/' + monster_type + '.png')
             self.monster_flp = pygame.transform.flip(self.monster_img, True, False)
-            self.monster_zoom = pygame.transform.scale(self.monster_flp, (48, 48))
             self.screen.blit(self.background, (0, 0))
+            if monster_type == 'boss':
+                self.monster_zoom = pygame.transform.scale(self.monster_img, (96, 96))
+                self.screen.blit(self.monster_zoom, (460, 240))
+            else:
+                self.monster_zoom = pygame.transform.scale(self.monster_flp, (48, 48))
+                self.screen.blit(self.monster_zoom, (500, 280))
             self.screen.blit(self.player_zoom, (120, 280))
-            self.screen.blit(self.monster_zoom, (500, 280))
             self.text = self.font1.render("FIGHT", True, (255, 255, 255, 255))
             self.screen.blit(self.text, (270, 32))
             self.text = self.font3.render(f"{self.player.hp} / {self.player.hp_max}", True, (255, 32, 32, 255))
@@ -167,6 +172,8 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         print("out of the fight")
+                        pygame.mixer.music.rewind()
+                        pygame.mixer.music.unpause()
                         fight = False
         pass
 
